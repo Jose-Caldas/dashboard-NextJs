@@ -61,12 +61,12 @@ export function Header() {
         </HStack>
         <Flex align="center">
           <Box mr="4" textAlign="right">
-            <Text>John Doe</Text>
+            <Text>José Caldas</Text>
             <Text color="gray.300" fontSize="small">
-              johndoe@gmail.com
+              jrcaldas2013@gmail.com
             </Text>
           </Box>
-          <Avatar size="md" name="John Doe" />
+          <Avatar size="md" name="José Caldas" />
         </Flex>
       </Flex>
     </Flex>

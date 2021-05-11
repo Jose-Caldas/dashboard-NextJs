@@ -10,7 +10,7 @@ const options = {
     toolbar: {
       show: false,
     },
-    zoon: {
+    zoom: {
       enabled: false,
     },
     forColor: theme.colors.gray[500],
