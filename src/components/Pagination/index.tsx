@@ -1,15 +1,14 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { RiFilter2Fill } from "react-icons/ri";
+import { Box, Stack, Text } from "@chakra-ui/react";
 import { PaginationItem } from "./PaginationItem";
 
 interface PaginationProps {
   totalCountOfRegisters: number;
   registerPerPage?: number;
-  currentPage?: 1;
+  currentPage?: number;
   onPageChange: (page: number) => void;
 }
 
-const siblingsCount = 2;
+const siblingsCount = 1;
 
 function generatePagesArray(from: number, to: number) {
   return [...new Array(to - from)]
@@ -51,15 +50,35 @@ export function Pagination({
         <strong>0</strong> - <strong>10</strong> de <strong>100</strong>
       </Box>
       <Stack direction="row" spacing="2">
+        {currentPage > 1 + siblingsCount && (
+          <>
+            <PaginationItem number={1} />
+            {currentPage > 2 + siblingsCount && (
+              <Text color="gray.300" width="8" textAlign="center">
+                ...
+              </Text>
+            )}
+          </>
+        )}
         {previousPages.length > 0 &&
           previousPages.map((page) => {
             return <PaginationItem key={page} number={page} />;
           })}
         <PaginationItem number={currentPage} isCurrent />;
         {nextPages.length > 0 &&
-          previousPages.map((page) => {
+          nextPages.map((page) => {
             return <PaginationItem key={page} number={page} />;
           })}
+        {currentPage + siblingsCount < lastPage && (
+          <>
+            {currentPage + 1 + siblingsCount < lastPage && (
+              <Text color="gray.300" width="8" textAlign="center">
+                ...
+              </Text>
+            )}
+            <PaginationItem number={lastPage} />
+          </>
+        )}
       </Stack>
     </Stack>
   );
