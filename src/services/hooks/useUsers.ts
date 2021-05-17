@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery, UseQueryOptions } from "react-query";
 import { api } from "../api";
 
 type User = {
@@ -46,6 +46,8 @@ export function useUsers(page: number) {
     ["users", page],
     () => getUsers(page),
 
-    { staleTime: 1000 * 60 * 10 } // 10 minutos
+    {
+      staleTime: 1000 * 60 * 10, // 10 minutos
+    }
   );
 }

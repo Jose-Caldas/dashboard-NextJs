@@ -18,6 +18,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "react-query";
 import { api } from "../../services/api";
+import { queryClient } from "../../services/queryClient";
+import { useRouter } from "next/dist/client/router";
 
 type CreateUserFormData = {
   name: string;
@@ -27,38 +29,50 @@ type CreateUserFormData = {
 };
 
 const createUserFormSchema = yup.object().shape({
-  name: yup.string().required("Nome obrigatório"),
+  name: yup.string(),
+  // name: yup.string().required("Nome obrigatório"),
   email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-  password: yup
-    .string()
-    .required("Senha obrigatória")
-    .min(6, "No mínimo 6 caracteres"),
+  password: yup.string(),
+  // .required("Senha obrigatória")
+  // .min(6, "No mínimo 6 caracteres"),
   password_confirmation: yup
     .string()
     .oneOf([null, yup.ref("password")], "As senhas precisam ser iguais"),
 });
 
 export default function CreateUser() {
-  const createUsers = useMutation(async (user: CreateUserFormData) => {
-    const response = await api.post("users", {
-      user: {
-        ...user,
-        created_at: new Date(),
+  const router = useRouter();
+
+  const createUsers = useMutation(
+    async (user: CreateUserFormData) => {
+      const response = await api.post("users", {
+        user: {
+          ...user,
+          created_at: new Date(),
+        },
+      });
+      return response.data.user;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("users");
       },
-    });
-    return response.data.user;
-  });
+    }
+  );
+
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(createUserFormSchema),
   });
 
-  const { errors } = formState;
+  // const { errors } = formState;
 
   const handleCreaterUser: SubmitHandler<CreateUserFormData> = async (
     values
   ) => {
     await createUsers.mutateAsync(values);
     console.log(values);
+
+    router.push("/users");
   };
 
   return (
@@ -84,15 +98,16 @@ export default function CreateUser() {
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} width="100%">
               <Input
                 name="name"
+                type="text"
                 label="Nome completo"
                 {...register("name")}
-                error={errors.name}
+                // error={errors.name}
               />
               <Input
                 name="email"
                 type="email"
                 label="E-mail"
-                error={errors.email}
+                // error={errors.email}
                 {...register("email")}
               />
             </SimpleGrid>
@@ -101,14 +116,14 @@ export default function CreateUser() {
                 name="password"
                 type="password"
                 label="Senha"
-                error={errors.password}
+                // error={errors.password}
                 {...register("password")}
               />
               <Input
                 name="password_confirmation"
                 type="password"
                 label="Confirmação da senha"
-                error={errors.password_confirmation}
+                // error={errors.password_confirmation}
                 {...register("password_confirmation")}
               />
             </SimpleGrid>
